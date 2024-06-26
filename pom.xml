@@ -45,24 +45,54 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!--下面四个东西基本上项目里一起出现，使用mp的框架来书写mapper，各版本之间比较融洽-->
+			<!--数据库连接-->
+			<!--我也不知道TM的这个东西为什么不能出现在父类的pom文件，只能出现在子类的pom文件-->
+			<!--			<dependency>
+                            <groupId>com.mysql</groupId>
+                            <artifactId>mysql-connector-j</artifactId>
+                            <scope>runtime</scope>
+                        </dependency>-->
+			<!--mybatis启动-->
+			<dependency>
+				<groupId>org.mybatis.spring.boot</groupId>
+				<artifactId>mybatis-spring-boot-starter</artifactId>
+				<version>3.0.3</version>
+			</dependency>
+			<!--alibaba数据库连接池druid-->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>1.2.15</version>
+			</dependency>
+			<!--mybatis-plus启动-->
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-boot-starter</artifactId>
+				<version>3.5.3.1</version>
+			</dependency>
 
+			<!--导入common模块里面的依赖项-->
 			<dependency>
 				<groupId>com.sanzuniao</groupId>
 				<artifactId>common</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 
-			<!--控制版本-->
+			<!--根目录下控制版本-->
+			<!--json格式化-->
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
 				<version>1.2.70</version>
 			</dependency>
+			<!--hutool工具类-->
 			<dependency>
 				<groupId>cn.hutool</groupId>
 				<artifactId>hutool-all</artifactId>
 				<version>5.8.10</version>
 			</dependency>
+			<!--aop 切面-->
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
