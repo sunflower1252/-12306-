@@ -32,7 +32,7 @@
 
     <dependencies>
 
-        <!--引入common模块里面的pom文件-->
+        <!--引入common模块-->
         <dependency>
             <groupId>com.sanzuniao</groupId>
             <artifactId>common</artifactId>
