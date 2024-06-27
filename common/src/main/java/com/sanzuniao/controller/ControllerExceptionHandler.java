@@ -1,8 +1,11 @@
 package com.sanzuniao.controller;
 
+import com.sanzuniao.exception.BusinessException;
 import com.sanzuniao.response.Result;
+import org.apache.ibatis.builder.BuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,8 +20,7 @@ public class ControllerExceptionHandler {
 
     /**
      * 所有异常统一处理
-     *
-     * @param e 异常信息
+     * @param e
      * @return
      */
     @ExceptionHandler(value = Exception.class)
@@ -32,8 +34,52 @@ public class ControllerExceptionHandler {
         Result result = new Result();
         LOG.error("系统异常：", e);
         result.setSuccess(false);
-        result.setMessage("手机号已注册");
+        result.setMessage("系统出现异常，请联系管理员");
         return result;
+    }
+
+    /**
+     * 业务异常统一处理
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BuilderException.class)
+    @ResponseBody
+    public Result exceptionHandler(BusinessException e) {
+        Result Result = new Result();
+        LOG.error("业务异常：{}", e.getE().getDesc());
+        Result.setSuccess(false);
+        Result.setMessage(e.getE().getDesc());
+        return Result;
+    }
+
+    /**
+     * 校验异常统一处理
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BindException.class)
+    @ResponseBody
+    public Result exceptionHandler(BindException e) {
+        Result Result = new Result();
+        LOG.error("校验异常：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        Result.setSuccess(false);
+        Result.setMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return Result;
+    }
+
+    /**
+     * 校验异常统一处理
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = RuntimeException.class)
+    @ResponseBody
+    public Result exceptionHandler(RuntimeException e) {
+        throw e;
     }
 
 }
