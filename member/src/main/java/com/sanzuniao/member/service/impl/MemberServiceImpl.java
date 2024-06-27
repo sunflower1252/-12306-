@@ -1,7 +1,10 @@
 package com.sanzuniao.member.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sanzuniao.exception.BusinessException;
+import com.sanzuniao.exception.BusinessExceptionEnum;
 import com.sanzuniao.member.domain.Member;
 import com.sanzuniao.member.mapper.MemberMapper;
 import com.sanzuniao.member.req.MemberRegisterReq;
@@ -41,8 +44,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         String mobile = req.getMobile();
         Member memberByMobile = memberMapper.selectOne(new QueryWrapper<Member>()
                 .eq("mobile", mobile));
-        if (memberByMobile != null) {
-            throw new RuntimeException("手机号已被注册");
+        if (ObjectUtil.isNotEmpty(memberByMobile)) {
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
 
         Member member = new Member();

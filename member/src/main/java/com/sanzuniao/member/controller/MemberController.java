@@ -4,6 +4,7 @@ import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.service.MemberService;
 import com.sanzuniao.response.Result;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -28,7 +29,7 @@ public class MemberController {
      * @return 用户id
      */
     @PostMapping("/register")
-    public Result register(@RequestBody MemberRegisterReq req) {
+    public Result register(@Valid @RequestBody MemberRegisterReq req) {
         return Result.success(memberService.register(req));
     }
 
