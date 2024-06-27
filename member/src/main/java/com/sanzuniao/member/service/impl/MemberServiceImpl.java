@@ -9,6 +9,7 @@ import com.sanzuniao.member.domain.Member;
 import com.sanzuniao.member.mapper.MemberMapper;
 import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.service.MemberService;
+import com.sanzuniao.util.SnowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,8 +50,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         }
 
         Member member = new Member();
-        // 使用系统的时间戳作为用户id
-        member.setId(System.currentTimeMillis());
+        // 使用雪花算法生成用户id
+        member.setId(SnowUtil.getSnowflakeNextId());
         member.setMobile(mobile);
 
         memberMapper.insert(member);
