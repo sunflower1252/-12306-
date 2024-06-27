@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sanzuniao.member.domain.Member;
 import com.sanzuniao.member.mapper.MemberMapper;
+import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,13 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
     }
 
     /**
-     * @param mobile 手机号
+     * @param req 会员封装类
      * @return 用户id
      */
     @Override
-    public long register(String mobile) {
+    public long register(MemberRegisterReq req) {
+        // 获取手机号检查是否已经注册过
+        String mobile = req.getMobile();
         Member memberByMobile = memberMapper.selectOne(new QueryWrapper<Member>()
                 .eq("mobile", mobile));
         if (memberByMobile != null) {

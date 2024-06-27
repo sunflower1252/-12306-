@@ -1,6 +1,8 @@
 package com.sanzuniao.member.controller;
 
+import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.service.MemberService;
+import com.sanzuniao.response.Result;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +24,12 @@ public class MemberController {
 
     /**
      * 注册
-     *
-     * @param mobile 手机号
+     * @param req 会员封装类
      * @return 用户id
      */
     @PostMapping("/register")
-    public Long register(@RequestParam String mobile) {
-        return memberService.register(mobile);
+    public Result register(@RequestBody MemberRegisterReq req) {
+        return Result.success(memberService.register(req));
     }
 
 }

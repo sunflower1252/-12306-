@@ -2,6 +2,7 @@ package com.sanzuniao.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sanzuniao.member.domain.Member;
+import com.sanzuniao.member.req.MemberRegisterReq;
 
 /**
  * @author yangguang
@@ -12,5 +13,5 @@ public interface MemberService extends IService<Member> {
 
     String test();
 
-    long register(String mobile);
+    long register(MemberRegisterReq req);
 }
