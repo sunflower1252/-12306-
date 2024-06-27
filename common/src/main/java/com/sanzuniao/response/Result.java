@@ -13,28 +13,28 @@ import java.io.Serializable;
 @Data
 public class Result implements Serializable {
     /**
-     * code 200 500 401 404\
+     * success 200 500 401 404\
      * msg 信息
      * data 数据
      */
 
-    private Integer code;
+    private boolean success;
 
-    private String msg;
+    private String message;
 
-    private Object data;
+    private Object context;
 
     public static Result success(Object object) {
         Result r = new Result();
-        r.data = object;
-        r.code = 1;
+        r.context = object;
+        r.success = true;
         return r;
     }
 
     public static Result error(String msg) {
         Result r = new Result();
-        r.msg = msg;
-        r.code = 0;
+        r.message = msg;
+        r.success = false;
         return r;
     }
 
