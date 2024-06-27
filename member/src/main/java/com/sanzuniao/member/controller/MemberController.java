@@ -1,6 +1,7 @@
 package com.sanzuniao.member.controller;
 
 import com.sanzuniao.member.req.MemberRegisterReq;
+import com.sanzuniao.member.req.MemberSendCodeReq;
 import com.sanzuniao.member.service.MemberService;
 import com.sanzuniao.response.Result;
 import jakarta.annotation.Resource;
@@ -31,6 +32,13 @@ public class MemberController {
     @PostMapping("/register")
     public Result register(@Valid @RequestBody MemberRegisterReq req) {
         return Result.success(memberService.register(req));
+    }
+
+
+    @PostMapping("/sendCode")
+    public Result sendCode(@Valid @RequestBody MemberSendCodeReq req) {
+        memberService.sendCode(req);
+        return Result.success("发送成功");
     }
 
 }

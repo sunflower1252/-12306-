@@ -8,6 +8,7 @@ import com.sanzuniao.exception.BusinessExceptionEnum;
 import com.sanzuniao.member.domain.Member;
 import com.sanzuniao.member.mapper.MemberMapper;
 import com.sanzuniao.member.req.MemberRegisterReq;
+import com.sanzuniao.member.req.MemberSendCodeReq;
 import com.sanzuniao.member.service.MemberService;
 import com.sanzuniao.util.SnowUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,37 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
 
         memberMapper.insert(member);
         return member.getId();
+    }
+
+    @Override
+    public void sendCode(MemberSendCodeReq req) {
+        // 获取手机号检查是否已经注册过
+        String mobile = req.getMobile();
+        Member memberByMobile = memberMapper.selectOne(new QueryWrapper<Member>()
+                .eq("mobile", mobile));
+        // 如果手机号不存在，则没注册过，插入记录
+        if (ObjectUtil.isEmpty(memberByMobile)) {
+            log.info("手机号不存在，插入一条记录");
+            Member member = new Member();
+            // 使用雪花算法生成用户id
+            member.setId(SnowUtil.getSnowflakeNextId());
+            member.setMobile(mobile);
+            memberMapper.insert(member);
+        }
+        log.info("手机号存在，不插入记录");
+
+
+        // 生成验证码
+        //String code = RandomUtil.randomString(4);
+        //为了生产环境更方便，更改短信验证码
+        String code = "1111";
+        log.info("生成短信验证码：{}", code);
+
+        // 保存短信记录表：手机号，短信验证码，有效期，是否已使用，业务类型，发送时间，使用时间
+        log.info("保存短信记录表");
+
+        // 对接短信通道，发送短信
+        log.info("对接短信通道，发送短信");
     }
 
 
