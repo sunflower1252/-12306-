@@ -79,7 +79,6 @@
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 
-			<!--根目录下控制版本-->
 			<!--json格式化-->
 			<dependency>
 				<groupId>com.alibaba</groupId>

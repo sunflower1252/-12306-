@@ -1,5 +1,6 @@
 package com.sanzuniao.member.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sanzuniao.member.domain.Member;
 import com.sanzuniao.member.mapper.MemberMapper;
@@ -28,6 +29,29 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         log.info("member:{}", member);
         return member.getMobile();
     }
+
+    /**
+     * @param mobile 手机号
+     * @return 用户id
+     */
+    @Override
+    public long register(String mobile) {
+        Member memberByMobile = memberMapper.selectOne(new QueryWrapper<Member>()
+                .eq("mobile", mobile));
+        if (memberByMobile != null) {
+            throw new RuntimeException("手机号已被注册");
+        }
+
+        Member member = new Member();
+        // 使用系统的时间戳作为用户id
+        member.setId(System.currentTimeMillis());
+        member.setMobile(mobile);
+
+        memberMapper.insert(member);
+        return member.getId();
+    }
+
+
 }
 
 

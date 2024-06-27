@@ -11,4 +11,6 @@ import com.sanzuniao.member.domain.Member;
 public interface MemberService extends IService<Member> {
 
     String test();
+
+    long register(String mobile);
 }
