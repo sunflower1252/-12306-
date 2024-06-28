@@ -2,8 +2,10 @@ package com.sanzuniao.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sanzuniao.member.domain.Member;
+import com.sanzuniao.member.req.MemberLoginReq;
 import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.req.MemberSendCodeReq;
+import com.sanzuniao.member.resp.MemberLoginResp;
 
 /**
  * @author yangguang
@@ -17,4 +19,6 @@ public interface MemberService extends IService<Member> {
     long register(MemberRegisterReq req);
 
     void sendCode(MemberSendCodeReq req);
+
+    MemberLoginResp login(MemberLoginReq req);
 }

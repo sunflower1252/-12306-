@@ -1,5 +1,6 @@
 package com.sanzuniao.member.controller;
 
+import com.sanzuniao.member.req.MemberLoginReq;
 import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.req.MemberSendCodeReq;
 import com.sanzuniao.member.service.MemberService;
@@ -39,6 +40,11 @@ public class MemberController {
     public Result sendCode(@Valid @RequestBody MemberSendCodeReq req) {
         memberService.sendCode(req);
         return Result.success("发送成功");
+    }
+
+    @GetMapping("/login")
+    public Result login(@Valid @RequestBody MemberLoginReq req) {
+        return Result.success(memberService.login(req));
     }
 
 }

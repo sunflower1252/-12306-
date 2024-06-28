@@ -1,5 +1,7 @@
 package com.sanzuniao.member.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,8 +9,10 @@ import com.sanzuniao.exception.BusinessException;
 import com.sanzuniao.exception.BusinessExceptionEnum;
 import com.sanzuniao.member.domain.Member;
 import com.sanzuniao.member.mapper.MemberMapper;
+import com.sanzuniao.member.req.MemberLoginReq;
 import com.sanzuniao.member.req.MemberRegisterReq;
 import com.sanzuniao.member.req.MemberSendCodeReq;
+import com.sanzuniao.member.resp.MemberLoginResp;
 import com.sanzuniao.member.service.MemberService;
 import com.sanzuniao.util.SnowUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +42,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
 
     /**
      * @param req 会员封装类
+     *            mobile手机号
      * @return 用户id
      */
     @Override
@@ -46,7 +51,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         String mobile = req.getMobile();
         Member memberByMobile = memberMapper.selectOne(new QueryWrapper<Member>()
                 .eq("mobile", mobile));
-        if (ObjectUtil.isNotEmpty(memberByMobile)) {
+        if (ObjectUtil.isNotNull(memberByMobile)) {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
 
@@ -59,6 +64,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         return member.getId();
     }
 
+    /**
+     * @param req 封装过后的手机号
+     *            mobile 手机号
+     */
     @Override
     public void sendCode(MemberSendCodeReq req) {
         // 获取手机号检查是否已经注册过
@@ -66,16 +75,16 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         Member memberByMobile = memberMapper.selectOne(new QueryWrapper<Member>()
                 .eq("mobile", mobile));
         // 如果手机号不存在，则没注册过，插入记录
-        if (ObjectUtil.isEmpty(memberByMobile)) {
+        if (ObjectUtil.isNull(memberByMobile)) {
             log.info("手机号不存在，插入一条记录");
             Member member = new Member();
             // 使用雪花算法生成用户id
             member.setId(SnowUtil.getSnowflakeNextId());
             member.setMobile(mobile);
             memberMapper.insert(member);
+        } else {
+            log.info("手机号存在，不插入记录");
         }
-        log.info("手机号存在，不插入记录");
-
 
         // 生成验证码
         //String code = RandomUtil.randomString(4);
@@ -90,7 +99,39 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         log.info("对接短信通道，发送短信");
     }
 
+    /**
+     * @param req 封装的登录类
+     *            mobile 手机号
+     *            code 短信验证码
+     * @return token参数
+     */
+    @Override
+    public MemberLoginResp login(MemberLoginReq req) {
+        // 获取手机号
+        String mobile = req.getMobile();
+        String code = req.getCode();
+        Member memberDb = memberMapper.selectOne(new QueryWrapper<Member>()
+                .eq("mobile", mobile));
 
+        // 手机号不存在，添加一条记录
+        if (ObjectUtil.isNull(memberDb)) {
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_NOT_EXIST);
+        }
+
+        // 校验验证码
+        if (!"1111".equals(code)) {
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_CODE_ERROR);
+        }
+
+        //返回封装类，这个封装类是没有隐私信息的，如果返回的数据有隐私信息的东西，我们要写一个封装类来分会
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(memberDb, MemberLoginResp.class);
+        // 利用sa-token，生成token
+        StpUtil.login(memberLoginResp.getId());
+        String token = String.valueOf(StpUtil.getTokenInfo().getTokenValue());
+        memberLoginResp.setToken(token);
+        //返回封装类
+        return memberLoginResp;
+    }
 }
 
 
