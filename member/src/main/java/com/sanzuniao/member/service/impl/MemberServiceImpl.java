@@ -101,16 +101,17 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
     }
 
     /**
-     * @param req 封装的登录类
+     * @param req 封装的登录数据类
      *            mobile 手机号
      *            code 短信验证码
-     * @return token参数
+     * @return memberLoginResp 封装的返回数据类
      */
     @Override
     public MemberLoginResp login(MemberLoginReq req) {
-        // 获取手机号
+        // 通过封装的登录数据类来获取手机号
         String mobile = req.getMobile();
         String code = req.getCode();
+        // 根据手机号查询数据库，把用户的信息查出来，包含手机号合用户id
         Member memberDb = memberMapper.selectOne(new QueryWrapper<Member>()
                 .eq("mobile", mobile));
 
@@ -130,7 +131,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         final String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
         // 封装类设置token
         memberLoginResp.setToken(token);
-        //返回封装类
+        //返回封装的返回数据类
         return memberLoginResp;
     }
 }
