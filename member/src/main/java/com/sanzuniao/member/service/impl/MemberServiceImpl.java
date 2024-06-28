@@ -41,7 +41,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         return member.getMobile();
     }
 
+
     /**
+     * 注册
      * @param req 会员封装类
      *            mobile手机号
      * @return 用户id
@@ -60,10 +62,10 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         // 使用雪花算法生成用户id
         member.setId(SnowUtil.getSnowflakeNextId());
         member.setMobile(mobile);
-
         memberMapper.insert(member);
         return member.getId();
     }
+
 
     /**
      * @param req 封装过后的手机号
@@ -86,7 +88,6 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         } else {
             log.info("手机号存在，不插入记录");
         }
-
         // 生成验证码
         //String code = RandomUtil.randomString(4);
         //为了生产环境更方便，更改短信验证码
@@ -99,6 +100,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         // 对接短信通道，发送短信
         log.info("对接短信通道，发送短信");
     }
+
 
     /**
      * @param req 封装的登录数据类

@@ -2,6 +2,7 @@ package com.sanzuniao.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sanzuniao.member.domain.Passenger;
+import com.sanzuniao.member.req.PassengerSaveReq;
 
 /**
  * @author yangguang
@@ -10,4 +11,5 @@ import com.sanzuniao.member.domain.Passenger;
  */
 public interface PassengerService extends IService<Passenger> {
 
+    void save(PassengerSaveReq req);
 }
