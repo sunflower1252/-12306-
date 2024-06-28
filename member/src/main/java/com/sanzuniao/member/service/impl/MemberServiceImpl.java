@@ -112,11 +112,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         String mobile = req.getMobile();
         String code = req.getCode();
         // 根据手机号查询数据库，把用户的信息查出来，包含手机号合用户id
-        Member memberDb = memberMapper.selectOne(new QueryWrapper<Member>()
+        Member member = memberMapper.selectOne(new QueryWrapper<Member>()
                 .eq("mobile", mobile));
 
         // 手机号不存在，添加一条记录
-        if (ObjectUtil.isNull(memberDb)) {
+        if (ObjectUtil.isNull(member)) {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_NOT_EXIST);
         }
 
@@ -126,7 +126,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         }
 
         // 返回封装类，这个封装类是没有隐私信息的，如果返回的数据有隐私信息的东西，我们要写一个封装类来返回
-        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(memberDb, MemberLoginResp.class);
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(member, MemberLoginResp.class);
         // 生成token，JwtUtil.createToken是封装在common.common包中的
         final String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
         // 封装类设置token
@@ -134,6 +134,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
         //返回封装的返回数据类
         return memberLoginResp;
     }
+
+
 }
 
 
