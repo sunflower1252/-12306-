@@ -64,6 +64,7 @@ public class JwtUtil {
         //根据payload和key生成token
         String token = JWTUtil.createToken(payload, key.getBytes());
         LOG.info("生成JWT token：{}", token);
+
         return token;
     }
 

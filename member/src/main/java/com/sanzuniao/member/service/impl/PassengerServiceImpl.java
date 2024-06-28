@@ -3,6 +3,7 @@ package com.sanzuniao.member.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sanzuniao.context.LoginMemberContext;
 import com.sanzuniao.member.domain.Passenger;
 import com.sanzuniao.member.mapper.PassengerMapper;
 import com.sanzuniao.member.req.PassengerSaveReq;
@@ -40,6 +41,9 @@ public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger
 
         // 为乘客分配一个唯一的成员ID
         passenger.setId(SnowUtil.getSnowflakeNextId());
+        // 从线程中取出将token解析后的数据，取出会员id
+        long memberId = LoginMemberContext.getId();
+        passenger.setMemberId(memberId);
 
         // 设置创建时间和更新时间为当前时间
         DateTime now = DateTime.now();

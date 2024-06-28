@@ -27,7 +27,6 @@ public class PassengerSaveReq implements Serializable {
     /**
      * 会员id
      */
-    @NotNull(message = "【会员id】不能为空")
     private Long memberId;
 
     /**
