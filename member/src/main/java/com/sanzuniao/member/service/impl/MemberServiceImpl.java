@@ -1,10 +1,10 @@
 package com.sanzuniao.member.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sanzuniao.common.JwtUtil;
 import com.sanzuniao.exception.BusinessException;
 import com.sanzuniao.exception.BusinessExceptionEnum;
 import com.sanzuniao.member.domain.Member;
@@ -18,6 +18,7 @@ import com.sanzuniao.util.SnowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 /**
  * @author yangguang
@@ -123,11 +124,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member>
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_CODE_ERROR);
         }
 
-        //返回封装类，这个封装类是没有隐私信息的，如果返回的数据有隐私信息的东西，我们要写一个封装类来分会
+        // 返回封装类，这个封装类是没有隐私信息的，如果返回的数据有隐私信息的东西，我们要写一个封装类来返回
         MemberLoginResp memberLoginResp = BeanUtil.copyProperties(memberDb, MemberLoginResp.class);
-        // 利用sa-token，生成token
-        StpUtil.login(memberLoginResp.getId());
-        String token = String.valueOf(StpUtil.getTokenInfo().getTokenValue());
+        // 生成token，JwtUtil.createToken是封装在common.common包中的
+        final String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
+        // 封装类设置token
         memberLoginResp.setToken(token);
         //返回封装类
         return memberLoginResp;
