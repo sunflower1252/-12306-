@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sanzuniao.context.LoginMemberContext;
 import com.sanzuniao.member.domain.Passenger;
 import com.sanzuniao.member.mapper.PassengerMapper;
+import com.sanzuniao.member.req.PassengerDelReq;
 import com.sanzuniao.member.req.PassengerListReq;
 import com.sanzuniao.member.req.PassengerSaveReq;
 import com.sanzuniao.member.resp.PassengerListResp;
+import com.sanzuniao.member.resp.PassengerQueryResp;
 import com.sanzuniao.member.service.PassengerService;
 import com.sanzuniao.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -18,59 +20,77 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+ * 实现了{@link PassengerService}接口，针对数据库表【passenger】提供具体操作服务。
+ * 使用MyBatis Plus的{@link ServiceImpl}简化CRUD操作实现。
+ *
  * @author yangguang
- * @description 针对表【passenger(乘车人)】的数据库操作Service实现
- * @createDate 2024-06-28 20:50:53
+ * @since 2024-06-28
  */
 @Service
-public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger>
-        implements PassengerService {
+public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger> implements PassengerService {
 
     @Resource
     private PassengerMapper passengerMapper;
 
-
     /**
-     * 保存乘客信息。
-     * <p>
-     * 该方法接收一个乘客保存请求（PassengerSaveReq），将其转化为Passenger实体对象，
-     * 并在实体对象中自动填充创建时间和更新时间为当前时间，分配一个新的成员ID（使用雪花算法生成），
-     * 随后将此实体对象持久化存储到数据库中。
+     * 保存乘客信息至数据库。
+     * <ul>
+     *     <li>将请求参数转换为实体对象。</li>
+     *     <li>生成唯一ID（Snowflake算法）。</li>
+     *     <li>设置当前登录会员ID。</li>
+     *     <li>记录创建和更新时间。</li>
+     *     <li>执行数据库插入操作。</li>
+     * </ul>
      *
-     * @param req 乘客保存请求对象，其中包含了待保存的乘客详细信息。
+     * @param req 包含乘客信息的保存请求
      */
     @Override
     public void save(PassengerSaveReq req) {
-        // 利用BeanUtil工具将请求参数转换为Passenger实体，以便进行数据库操作
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
-
-        // 为乘客分配一个唯一的成员ID
         passenger.setId(SnowUtil.getSnowflakeNextId());
-        // 从线程中取出将token解析后的数据，取出会员id
-        long memberId = LoginMemberContext.getId();
-        passenger.setMemberId(memberId);
-
-        // 设置创建时间和更新时间为当前时间
+        passenger.setMemberId(LoginMemberContext.getId());
         DateTime now = DateTime.now();
         passenger.setCreateTime(now);
         passenger.setUpdateTime(now);
-
-        // 调用数据访问层（Mapper）的insert方法，将乘客信息保存至数据库
         passengerMapper.insert(passenger);
     }
 
-
+    /**
+     * 查询指定会员ID下的乘客列表。
+     * <ul>
+     *     <li>构建查询条件，根据会员ID筛选。</li>
+     *     <li>执行查询并转换结果为响应DTO列表。</li>
+     * </ul>
+     *
+     * @param req 查询请求，包含会员ID
+     * @return 乘客列表响应DTO
+     */
     @Override
-    public List<PassengerListResp> quertList(PassengerListReq req) {
-        Long memberId = req.getMemberId();
-        List<Passenger> passengerList = passengerMapper.selectList(new QueryWrapper<Passenger>()
-                .eq("memberId", memberId));
-        List<PassengerListResp> passengerListResp = BeanUtil.copyToList(passengerList, PassengerListResp.class);
-        return passengerListResp;
+    public List<PassengerListResp> queryList(PassengerListReq req) {
+        List<Passenger> passengers = passengerMapper.selectList(new QueryWrapper<Passenger>().eq("memberId", req.getMemberId()));
+        return BeanUtil.copyToList(passengers, PassengerListResp.class);
     }
 
+    /**
+     * 根据ID删除乘客记录。
+     *
+     * @param req 包含乘客ID的删除请求
+     */
+    @Override
+    public void delete(PassengerDelReq req) {
+        passengerMapper.delete(new QueryWrapper<Passenger>().eq("id", req.getId()));
+    }
+
+    /**
+     * 查询当前登录会员的乘客信息列表，并按名称降序排列。
+     *
+     * @return 当前会员的乘客信息响应DTO列表
+     */
+    @Override
+    public List<PassengerQueryResp> queryMine() {
+        List<Passenger> passengers = passengerMapper.selectList(new QueryWrapper<Passenger>()
+                .eq("memberId", LoginMemberContext.getId())
+                .orderByDesc("name"));
+        return BeanUtil.copyToList(passengers, PassengerQueryResp.class);
+    }
 }
-
-
-
-
