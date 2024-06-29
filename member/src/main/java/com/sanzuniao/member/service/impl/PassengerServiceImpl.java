@@ -2,15 +2,20 @@ package com.sanzuniao.member.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sanzuniao.context.LoginMemberContext;
 import com.sanzuniao.member.domain.Passenger;
 import com.sanzuniao.member.mapper.PassengerMapper;
+import com.sanzuniao.member.req.PassengerListReq;
 import com.sanzuniao.member.req.PassengerSaveReq;
+import com.sanzuniao.member.resp.PassengerListResp;
 import com.sanzuniao.member.service.PassengerService;
 import com.sanzuniao.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author yangguang
@@ -54,6 +59,15 @@ public class PassengerServiceImpl extends ServiceImpl<PassengerMapper, Passenger
         passengerMapper.insert(passenger);
     }
 
+
+    @Override
+    public List<PassengerListResp> quertList(PassengerListReq req) {
+        Long memberId = req.getMemberId();
+        List<Passenger> passengerList = passengerMapper.selectList(new QueryWrapper<Passenger>()
+                .eq("memberId", memberId));
+        List<PassengerListResp> passengerListResp = BeanUtil.copyToList(passengerList, PassengerListResp.class);
+        return passengerListResp;
+    }
 
 }
 

@@ -2,7 +2,11 @@ package com.sanzuniao.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sanzuniao.member.domain.Passenger;
+import com.sanzuniao.member.req.PassengerListReq;
 import com.sanzuniao.member.req.PassengerSaveReq;
+import com.sanzuniao.member.resp.PassengerListResp;
+
+import java.util.List;
 
 /**
  * @author yangguang
@@ -12,4 +16,6 @@ import com.sanzuniao.member.req.PassengerSaveReq;
 public interface PassengerService extends IService<Passenger> {
 
     void save(PassengerSaveReq req);
+
+    List<PassengerListResp> quertList(PassengerListReq req);
 }
