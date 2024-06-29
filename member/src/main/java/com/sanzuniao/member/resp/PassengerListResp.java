@@ -1,6 +1,8 @@
 package com.sanzuniao.member.resp;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,11 +18,13 @@ public class PassengerListResp implements Serializable {
     /**
      * id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 会员id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
     /**
