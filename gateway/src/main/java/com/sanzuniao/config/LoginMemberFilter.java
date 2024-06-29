@@ -34,7 +34,8 @@ public class LoginMemberFilter implements Ordered, GlobalFilter {
         // 判断当前请求是否需要被拦截（如登录、发送验证码等公开接口无需验证）
         if (path.contains("/admin")
                 || path.contains("/MemberController/login")
-                || path.contains("/MemberController/sendCode")) {
+                || path.contains("/MemberController/sendCode")
+                || path.contains("/MemberController/register")) {
             log.info("不需要拦截的请求路径: {}", path);
             // 直接放行
             return chain.filter(exchange);
